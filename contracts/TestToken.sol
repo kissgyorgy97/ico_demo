@@ -11,6 +11,7 @@ contract TestToken is CappedToken, PausableToken {
     // Special propeties
     bool public tradingStarted = false;
 
+    event TradeStarted();
   /**
   * @dev modifier that throws if trading has not started yet
    */
@@ -18,16 +19,22 @@ contract TestToken is CappedToken, PausableToken {
         require(tradingStarted);
         _;
     }
+ 
       
     constructor (uint256 cap) public CappedToken(cap) {}
         
   /**
   * @dev Allows the owner to enable the trading. This can not be undone
   */
-    function startTrading() public onlyOwner {
+    function startTrading() public onlyOwner returns (bool) {
         tradingStarted = true;
+        emit TradeStarted();
+        return true;
     }
 
+    function trading() public view returns (bool) {
+        return tradingStarted;
+    }
   /**
   * @dev Allows anyone to transfer the Change tokens once trading has started
   * @param _to the recipient address of the tokens.
@@ -50,4 +57,10 @@ contract TestToken is CappedToken, PausableToken {
     function emergencyERC20Drain( ERC20 oddToken, uint amount ) public {
         oddToken.transfer(owner, amount);
     }
+
+    function destroy() public onlyOwner {
+        selfdestruct(owner); //Destruct the contract
+       
+    }
+    
 }

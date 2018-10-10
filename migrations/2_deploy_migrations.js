@@ -5,6 +5,8 @@ const TestToken = artifacts.require('./TestToken.sol');
 
 module.exports = function(deployer) {
     // deployment steps 
-    deployer.deploy(TestToken);
-    deployer.deploy(TestTokenSale, TestToken, 0xd240e4cc96710f306824a4c1614a3303dff18abe, 1000);
-  };
+    
+    deployer.deploy(TestToken,2000 * (10 ** 18)).then(function() {
+      return deployer.deploy(TestTokenSale, TestToken.address, 1000, 1539180000, 1545724800);
+    });
+  }
